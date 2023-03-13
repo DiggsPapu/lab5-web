@@ -2,8 +2,139 @@
   <head>
   </head>
   <body>
+    <!-- <style>
+      .floating_scrolling {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 80%;
+        display: flex;
+        width: 100%;
+        padding: 32px;
+        box-sizing: border-box;
+      }
+    </style> -->
+    <!-- <div class="floating_scrolling">Hello</div> -->
     <script type="application/javascript">
-      // su código
-    </script>
+      // Style
+        // title
+        const title_section = document.createElement('div')
+        title_section.style.backgroundColor = "yellow"
+        const title = document.createElement('h1')
+        title.append("ChattingVVG")
+        title_section.append(title)
+        title_section.style.alignContent = 'center'
+        title_section.style.width = '100%'
+        title_section.style.position = '-webkit-sticky'
+        title_section.style.position = 'sticky'
+        title_section.style.top = '0%'
+        title_section.style.display = 'flex'
+        title_section.style.padding = '32px'
+        title_section.style.boxSizing = 'border-box'
+        // Submit and the input
+        const input_n_submitting = document.createElement('div')
+        const input = document.createElement('input')
+        input.style.backgroundColor = 'blue'
+        input.style.width = '80%'
+        const button = document.createElement('button')
+        button.style.backgroundColor = 'blue'
+        button.style.borderRadius = '100%'
+        button.style.width = '20%'
+        button.append('SEND')
+        const amount_characters = document.createElement('p')
+        input_n_submitting.append(input)
+        input_n_submitting.append(button)
+        input_n_submitting.append(amount_characters)
+        input_n_submitting.style.width = '100%'
+        input_n_submitting.style.position = '-webkit-sticky'
+        input_n_submitting.style.position = 'sticky'
+        input_n_submitting.style.top = '80%'
+        input_n_submitting.style.display = 'flex'
+        input_n_submitting.style.padding = '5px'
+        input_n_submitting.style.boxSizing = 'border-box'
+        input_n_submitting.style.backgroundColor = 'red'
+        
+        // input_n_submitting.appendChild(form)
+  
+        const ul = document.createElement('ul')
+        // Functionality
+        const Message = (text, user) => {
+          const li = document.createElement('li')
+          const userSpan = document.createElement('span')
+          userSpan.append(`${user}: `)
+          userSpan.style.fontWeight = 'bold'
+          li.append(userSpan)
+          li.append(text)
+  
+          return li
+        }
+  
+        const getMessages = async () => {
+          const response = await fetch('http://uvgenios.online/api/messages')
+          const messages = await response.json()
+  
+          const lis = messages.map((message) => Message(message.text, message.user))
+          lis.forEach((li) => ul.append(li))
+        }
+  
+  
+        const postMessage = async (text) => {
+          var review_txt = text.toString()
+          if (review_txt.length<140) {
+            const body = {
+              text,
+              user: 'Diggs'
+            }
+            const response = await fetch('http://uvgenios.online/api/messages', {
+              method: 'POST',
+              body: JSON.stringify(body),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+            )
+            return response
+          }
+          else{
+              alert("You tried to post a message bigger than 140 characters.");
+          }
+          
+        }
+        function countCharacters(amount_characters){
+          if (140>amount_characters.length){
+            amount_characters.style.backgroundColor = "green"
+            amount_characters.style.text = "The amount of characters is : "+amount_characters.length
+          }
+          else{
+            amount_characters.style.backgroundColor = "red"
+            amount_characters.style.text = "The amount of characters is : "+amount_characters.length
+          }
+        }
+        window.addEventListener('scroll', function() {
+          scrollY = window.scrollY;
+          input_n_submitting.style.top = scrollY + window.innerHeight - 150 + 'px';
+        });
+        countCharacters(amount_characters)
+        getMessages()
+  
+        button.addEventListener('click', async (event) => {
+          event.preventDefault()
+  
+          await postMessage(input.value)
+          ul.innerHTML = ""
+          getMessages()
+          
+        })
+        document.body.append(title_section)
+        document.body.append(input_n_submitting)
+        document.body.append(ul)
+        // In case makes a submit by pressing an enter.
+        input.addEventListener("keypress", function(event){
+            if(event.key === "Enter"){
+                event.preventDefault();
+                button.click()
+            }
+        })
+        input.addEventListener()
+      </script>
   </body>
 </html>

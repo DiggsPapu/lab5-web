@@ -15,6 +15,8 @@
     </style> -->
     <!-- <div class="floating_scrolling">Hello</div> -->
     <script type="application/javascript">
+      const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let message_counter = 0;
       // Style
         // title
         const title_section = document.createElement('div')
@@ -106,8 +108,19 @@
           if (arr_ !== null){return true}
           else{ return false}
         }
+        function generateName() {
+          const length = Math.floor(Math.random() * 20) + 1
+          let result = ' ';
+          const charactersLength = characters.length;
+          for ( let i = 0; i < length; i++ ) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+          }
+          return result;
+        }
         const Message = (text, user) => {
           url = isURL(text)
+          console.log(message_counter)
+          message_counter++
           if (url!==null){
             if(isImage(url)){
               const li = document.createElement('li')
@@ -127,11 +140,19 @@
             }
             else{
               const li = document.createElement('li')
+              const a = document.createElement('a')
+              a.href = url
               const userSpan = document.createElement('span')
               userSpan.append(`${user}: `)
               userSpan.style.fontWeight = 'bold'
+              const iframe = document.createElement('iframe')
+              iframe.src = url
+              iframe.height = 500
+              iframe.width = 500
               li.append(userSpan)
               li.append(text)
+              a.append(iframe)
+              li.append(iframe)
               return li
             }
             const li = document.createElement('li')
@@ -151,20 +172,20 @@
             li.append(text)
             return li
           }
-          
         }
         const getMessages = async () => {
           const response = await fetch('http://uvgenios.online/api/messages')
           const messages = await response.json()
+          
           const lis = messages.map((message) => Message(message.text, message.user))
           lis.forEach((li) => ul.append(li))
         }
         const postMessage = async (text) => {
           var review_txt = text.toString()
-          if (review_txt.length<140) {
+          if (review_txt.length<140 && review_txt.length>0) {
             const body = {
               text,
-              user: 'Diggs'
+              user: generateName()
             }
             const response = await fetch('http://uvgenios.online/api/messages', {
               method: 'POST',
@@ -176,8 +197,11 @@
             )
             return response
           }
-          else{
+          else if (review_txt.length>140){
               alert("You tried to post a message bigger than 140 characters.");
+          }
+          else{
+            alert("You tried to post a null message");
           }
         }
         // Count the amount of characters.

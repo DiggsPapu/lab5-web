@@ -33,11 +33,11 @@
         // Submit and the input
         const input_n_submitting = document.createElement('div')
         const input = document.createElement('input')
-        input.style.backgroundColor = 'blue'
         input.style.width = '80%'
+        input.style.backgroundColor = 'blue'
         const button = document.createElement('button')
         button.style.backgroundColor = 'blue'
-        button.style.borderRadius = '100%'
+        button.style.borderRadius = '50%'
         button.style.width = '10%'
         button.append('SEND')
         const amount_characters = document.createElement('p')
@@ -52,23 +52,110 @@
         input_n_submitting.style.display = 'flex'
         input_n_submitting.style.padding = '5px'
         input_n_submitting.style.boxSizing = 'border-box'
-        input_n_submitting.style.backgroundColor = 'red'
+        input_n_submitting.style.backgroundColor = 'yellow'
         // Messages
         const ul = document.createElement('ul')
         // Functionality
+        function isURL(text){
+          var exp = "(https://|www|file)"
+          var temp_txt = text.slice(0,8)
+          arr_ = text.match(exp)
+          if (arr_!==null){
+            // console.log(arr_, arr_[0], arr_["index"])
+            // console.log(arr_["input"].slice([arr_["index"]],text.length))
+            text= arr_["input"].slice([arr_["index"]],text.length)
+            // console.log(text)
+            arr_ = text.match(" ")
+            if (arr_ !==null){
+              //Is a link without any value later
+              text= arr_["input"].slice(0,[arr_["index"]])
+              return text
+            }
+            else{
+              return text
+            }
+          }
+          else{
+            return null
+          }
+          // if (temp_txt == exp){
+          //   console.log(text)
+          // };
+          // var exp = "/(\b(((https?|ftp|file|):\/\/)|www[.])[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig";
+          // var temp = text.replace(exp,"<a href=\"$1\" target=\"_blank\">$1</a>");
+          // var result = "";
+
+          // while (temp.length > 0) {
+          //     var pos = temp.indexOf("href=\"");
+          //     if (pos == -1) {
+          //         result += temp;
+          //         break;
+          //     }
+          //     result += temp.substring(0, pos + 6);
+
+          //     temp = temp.substring(pos + 6, temp.length);
+          //     if ((temp.indexOf("://") > 8) || (temp.indexOf("://") == -1)) {
+          //         result += "http://";
+          //     }
+          // }
+          // console.log(temp_txt);
+        }
+        function isImage(url){
+          // Is an image
+          arr_ = url.match("(gif|jpg|png)")
+          if (arr_ !== null){return true}
+          else{ return false}
+        }
         const Message = (text, user) => {
-          const li = document.createElement('li')
-          const userSpan = document.createElement('span')
-          userSpan.append(`${user}: `)
-          userSpan.style.fontWeight = 'bold'
-          li.append(userSpan)
-          li.append(text)
-          return li
+          url = isURL(text)
+          if (url!==null){
+            if(isImage(url)){
+              const li = document.createElement('li')
+              const userSpan = document.createElement('span')
+              userSpan.append(`${user}: `)
+              userSpan.style.fontWeight = 'bold'
+              const figure = document.createElement('figure')
+              const img = document.createElement('img')
+              img.src = url
+              img.width = "100"
+              img.height = "100"
+              figure.append(img)
+              li.append(userSpan)
+              li.append(text)
+              li.append(figure)
+              return li
+            }
+            else{
+              const li = document.createElement('li')
+              const userSpan = document.createElement('span')
+              userSpan.append(`${user}: `)
+              userSpan.style.fontWeight = 'bold'
+              li.append(userSpan)
+              li.append(text)
+              return li
+            }
+            const li = document.createElement('li')
+            const userSpan = document.createElement('span')
+            userSpan.append(`${user}: `)
+            userSpan.style.fontWeight = 'bold'
+            li.append(userSpan)
+            li.append(text)
+            return li
+          }
+          else{
+            const li = document.createElement('li')
+            const userSpan = document.createElement('span')
+            userSpan.append(`${user}: `)
+            userSpan.style.fontWeight = 'bold'
+            li.append(userSpan)
+            li.append(text)
+            return li
+          }
+          
         }
         const getMessages = async () => {
           const response = await fetch('http://uvgenios.online/api/messages')
           const messages = await response.json()
-  
           const lis = messages.map((message) => Message(message.text, message.user))
           lis.forEach((li) => ul.append(li))
         }
@@ -93,33 +180,17 @@
               alert("You tried to post a message bigger than 140 characters.");
           }
         }
-        function countCharacters(amount_characters){
-          if (140>amount_characters.length){
-            amount_characters.style.backgroundColor = "green"
-            amount_characters.style.text = "The amount of characters is : "+amount_characters.length
-          }
-          else{
-            amount_characters.style.backgroundColor = "red"
-            amount_characters.style.text = "The amount of characters is : "+amount_characters.length
-          }
-        }
-        window.addEventListener('scroll', function() {
-          scrollY = window.scrollY;
-          input_n_submitting.style.top = scrollY + window.innerHeight - 150 + 'px';
-        });
+        // Count the amount of characters.
         input.addEventListener('keydown', (event) =>{
           const char_amount = input.value.length
           
           if (140>amount_characters.length){
-            amount_characters.style.backgroundColor = "green"
             amount_characters.textContent = "The amount of characters is : " + char_amount
           }
           else{
-            amount_characters.style.backgroundColor = "red"
             amount_characters.textContent = "The amount of characters is : " + char_amount
           }
         })
-        countCharacters(amount_characters)
         getMessages()
   
         button.addEventListener('click', async (event) => {
@@ -140,7 +211,6 @@
                 button.click()
             }
         })
-        input.addEventListener()
       </script>
   </body>
 </html>

@@ -57,6 +57,8 @@
         input_n_submitting.style.backgroundColor = 'yellow'
         // Messages
         const ul = document.createElement('ul')
+        ul.style.width = '500px'
+        ul.style.display = 'grid'
         // Functionality
         function isURL(text){
           var exp = "(https://|www|file)"
@@ -120,13 +122,29 @@
         const Message = (text, user) => {
           url = isURL(text)
           console.log(message_counter)
+          const li = document.createElement('li')
+          li.style.borderRadius = '5%'
+          li.style.margin = "10"
+          li.style.listStylePosition = 'inside'
+          li.style.width = '400px'
+          const userSpan = document.createElement('span')
+          userSpan.append(`${user}: `)
+          userSpan.style.fontWeight = 'bold'
           message_counter++
+          if(message_counter%2===0){
+          li.style.textAlign = 'right'
+          li.style.alignSelf = 'right'
+          li.style.justifySelf = 'center'
+          li.style.marginRight = '500px'
+          }
+          else{
+            li.style.justifySelf = 'left'
+          }
           if (url!==null){
+            // Is an image
             if(isImage(url)){
-              const li = document.createElement('li')
-              const userSpan = document.createElement('span')
-              userSpan.append(`${user}: `)
-              userSpan.style.fontWeight = 'bold'
+              li.style.backgroundColor = 'green'
+              li.style.width = '25%'
               const figure = document.createElement('figure')
               const img = document.createElement('img')
               img.src = url
@@ -138,36 +156,34 @@
               li.append(figure)
               return li
             }
+            // Is an URL
             else{
-              const li = document.createElement('li')
+              const figure = document.createElement('figure')
+              li.style.backgroundColor =  'blue'
               const a = document.createElement('a')
+              a.style.backgroundColor =  'blue'
               a.href = url
-              const userSpan = document.createElement('span')
-              userSpan.append(`${user}: `)
-              userSpan.style.fontWeight = 'bold'
+              const p = document.createElement('p')
+              p.textContent = text
+              p.style.color = 'white'
+              userSpan.style.backgroundColor = 'blue'
               const iframe = document.createElement('iframe')
               iframe.src = url
-              iframe.height = 500
-              iframe.width = 500
+              iframe.height = 200
+              iframe.width = 200
+              figure.append(iframe)
+              a.append(p)
+              a.append(figure)
               li.append(userSpan)
-              li.append(text)
-              a.append(iframe)
-              li.append(iframe)
+              li.append(a)
               return li
             }
-            const li = document.createElement('li')
-            const userSpan = document.createElement('span')
-            userSpan.append(`${user}: `)
-            userSpan.style.fontWeight = 'bold'
-            li.append(userSpan)
-            li.append(text)
-            return li
           }
           else{
-            const li = document.createElement('li')
-            const userSpan = document.createElement('span')
-            userSpan.append(`${user}: `)
-            userSpan.style.fontWeight = 'bold'
+            // Is a message
+            li.style.backgroundColor = 'red'
+            li.style.height = '400px'
+            li.style.width = '500px'
             li.append(userSpan)
             li.append(text)
             return li
@@ -176,7 +192,6 @@
         const getMessages = async () => {
           const response = await fetch('http://uvgenios.online/api/messages')
           const messages = await response.json()
-          
           const lis = messages.map((message) => Message(message.text, message.user))
           lis.forEach((li) => ul.append(li))
         }
